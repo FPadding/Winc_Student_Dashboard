@@ -5,6 +5,7 @@ import GraphList from "../Components/GraphList"
 import Student from "./Student"
 import FilterListItem from "../Components/FilterListItem"
 import NavBar from "../Components/NavBar"
+import Radio from "../Components/Radio"
 
 
 class Root extends React.Component {
@@ -180,32 +181,25 @@ class Root extends React.Component {
                     <div className="content">
                         <div>
                             <form onChange={this.handleChange}>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="shownRatings"
-                                        value="fun"
-                                        checked={this.state.shownRatings === "fun"}
-                                    />Show Fun ratings
-                                </label>
+                                <Radio
+                                    value="fun"
+                                    checked={this.state.shownRatings === "fun"}
+                                    text="Show Fun ratings"
+                                />
+
                                 <br />
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="shownRatings"
-                                        value="difficulty"
-                                        checked={this.state.shownRatings === "difficulty"}
-                                    />Show difficulty ratings
-                                </label>
+                                <Radio
+                                    value="difficulty"
+                                    checked={this.state.shownRatings === "difficulty"}
+                                    text="Show difficulty ratings"
+                                />
+
                                 <br />
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="shownRatings"
-                                        value="both"
-                                        checked={this.state.shownRatings === "both"}
-                                    />Show both
-                                </label>
+                                <Radio
+                                    value="both"
+                                    checked={this.state.shownRatings === "both"}
+                                    text="Show both"
+                                />
                             </form>
                         </div>
 
