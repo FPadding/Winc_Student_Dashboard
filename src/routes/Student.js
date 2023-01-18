@@ -1,9 +1,14 @@
 import { useParams } from "react-router-dom"
-import { GraphList } from "../Components/GraphList"
+import GraphList from "../Components/GraphList"
 
-export function Student({ allRatings }) {
+const Student = ({ allRatings, showFunRating, showDifficultyRating }) => {
     const student = useParams().studentName
     return (
-        <GraphList allGraphsData={allRatings[student]} />
+        <GraphList
+            allGraphsData={allRatings[student]}
+            showFunRating={showFunRating}
+            showDifficultyRating={showDifficultyRating}
+        />
     )
 }
+export default Student

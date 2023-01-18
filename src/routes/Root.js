@@ -1,8 +1,10 @@
 import React from "react"
 import ratingData from "../ratingData"
-import { Route, Routes, Link } from "react-router-dom"
-import { GraphList } from "../Components/GraphList"
-import { Student } from "./Student"
+import { Route, Routes } from "react-router-dom"
+import GraphList from "../Components/GraphList"
+import Student from "./Student"
+import FilterListItem from "../Components/FilterListItem"
+import NavBar from "../Components/NavBar"
 
 
 class Root extends React.Component {
@@ -10,16 +12,16 @@ class Root extends React.Component {
         super()
         this.state = {
             ratingData: ratingData,
-            allAverages: [],
-            allStudents: [],
-            ratingsGroupedByStudent: {},
-            showFunRating: true,
-            showDifficultyRating: true,
+            allStudents: this.getAllStudents(),
+            shownRatings: "both",
+            shownStudents: [],
+            maxAssignmentsPerGraph: 14,
         }
-        // this.groupByAssignment = this.groupByAssignment.bind(this)
-        // this.getAllAverages = this.getAllAverages.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.handleFilterChange = this.handleFilterChange.bind(this)
 
     }
+
 
     getAverage(array, key) {
         return array.reduce((currentSum, newValue) => currentSum + parseInt(newValue[key]), 0) / array.length
@@ -29,23 +31,40 @@ class Root extends React.Component {
         return string.split(" ")[0]
     }
 
+    getAllStudents() {
+        const students = ratingData.map(entry =>
+            entry.name
+        )
+        const uniqueStudents = [...new Set(students)]
+        return uniqueStudents
+    }
+
+    filterStudents(ratingsArray, studentsArray) {
+        if (this.state.shownStudents.length) {
+            return ratingsArray.filter(entry =>
+                studentsArray.some(student =>
+                    entry.name === student
+                )
+            )
+        }
+        return ratingsArray
+    }
+
     groupByAssignment(array) {
         let allAssignments = {}
-
         array.forEach(entry => {
-            const assignmentName = this.firstWord(entry.assignment) //removes spaces, so the name can be used as an object key
+            const assignmentNameShort = entry.assignment.split(" ")[0] //removes spaces, so the name can be used as an object key
             const ratings = {
                 funRating: entry.funRating,
                 difficultyRating: entry.difficultyRating,
             }
-            if (allAssignments.hasOwnProperty(assignmentName)) {
-                allAssignments[assignmentName].push(ratings)
+            if (allAssignments.hasOwnProperty(assignmentNameShort)) {
+                allAssignments[assignmentNameShort].push(ratings)
             }
             else {
-                allAssignments[assignmentName] = [ratings]
+                allAssignments[assignmentNameShort] = [ratings]
             }
         });
-        // console.log(allAssignments)
         return allAssignments
     }
 
@@ -67,7 +86,7 @@ class Root extends React.Component {
         array.forEach(entry => {
             const student = entry.name
             const assignmentWithRatings = {
-                assignment: entry.assignment,
+                assignment: this.firstWord(entry.assignment),
                 funRating: parseInt(entry.funRating),
                 difficultyRating: parseInt(entry.difficultyRating),
             }
@@ -81,73 +100,147 @@ class Root extends React.Component {
         return allRatingsByStudent
     }
 
-    divideArrayIntoChunks(array, numberOfChunks) {
-        const itemsPerChunk = Math.ceil(array.length / numberOfChunks)
+    //one chunk means one graph
+
+    divideArrayIntoChunks(array) {
+
+        const numberOfGraphs = Math.ceil(array.length / this.state.maxAssignmentsPerGraph)
+        const assignmentsPerGraph = Math.ceil(array.length / numberOfGraphs)
         let newArray = []
-        for (let i = 0; i < array.length; i += itemsPerChunk) {
-            newArray.push(array.slice(i, i + itemsPerChunk))
+        if (!array.length % numberOfGraphs) {
+            for (let i = 0; i < array.length; i += assignmentsPerGraph) {
+                newArray.push(array.slice(i, i + assignmentsPerGraph))
+            }
+        }
+        else {
+            for (let i = 0; (array.length - i) % (assignmentsPerGraph - 1); i += assignmentsPerGraph) {
+                newArray.push(array.slice(i, i + assignmentsPerGraph))
+            }
+            for (let i = (newArray.length * assignmentsPerGraph); i < array.length; i += assignmentsPerGraph - 1) {
+                newArray.push(array.slice(i, i + assignmentsPerGraph - 1))
+            }
         }
         return newArray
     }
 
-    divideObjectIntoChunks(array, numberOfChunks) {
-        const allRatingsByStudent = this.groupByStudent(array)
+
+
+    divideObjectIntoChunks(object) {
         let newObject = {}
-        const allStudents = Object.keys(allRatingsByStudent)
-        allStudents.forEach(student => {
-            const dividedRatings = this.divideArrayIntoChunks(allRatingsByStudent[student], numberOfChunks)
+        this.state.allStudents.forEach(student => {
+            const dividedRatings = this.divideArrayIntoChunks(object[student])
             newObject[student] = dividedRatings
         })
         return newObject
     }
 
-    componentDidMount() {
-        const allAverages = this.getAllAverages([...this.state.ratingData])
-        const allAveragesSplit = this.divideArrayIntoChunks(allAverages, 4)
-        const ratingsGroupedByStudent = this.divideObjectIntoChunks([...this.state.ratingData], 4)
-        const allStudents = Object.keys(ratingsGroupedByStudent)
-        console.log(ratingsGroupedByStudent)
+    handleChange(event) {
+        const { name, value } = event.target
         this.setState({
-            allAverages: allAveragesSplit,
-            allStudents: allStudents,
-            ratingsGroupedByStudent: ratingsGroupedByStudent,
+            [name]: value
         })
     }
 
+    handleFilterChange(event) {
+        const { name } = event.target
+        this.state.shownStudents.includes(name) ?
+            this.setState({
+                shownStudents: [...this.state.shownStudents].filter(student => name !== student)
+            }) :
+            this.setState({
+                shownStudents: [...this.state.shownStudents].concat(name)
+            })
 
+    }
 
+    showRatings(ratingType) {
+        return (this.state.shownRatings === ratingType || this.state.shownRatings === "both")
+    }
 
+    getFilteredAverageGraphData() {
+        const filteredRatings = this.filterStudents(this.state.ratingData, this.state.shownStudents)
+        const averageRatings = this.getAllAverages(filteredRatings)
+        return this.divideArrayIntoChunks(averageRatings)
+    }
+
+    getFilteredStudentGraphData() {
+        const ratingsGroupedByStudent = this.groupByStudent(this.state.ratingData)
+        return this.divideObjectIntoChunks(ratingsGroupedByStudent)
+    }
 
 
     render() {
         return (
-            <div>
-                <nav>
-                    <Link to="/">Home</Link>
-                    <ul>
-                        {this.state.allStudents.map(student => (
-                            <li>
-                                <Link to={`/${student}`}>{student}</Link>
-                            </li>
-                        ))}
-                    </ul>
+            <>
+                <header>
+                    <h1>Student Dashboard</h1>
+                </header>
+                <div>
+                    <NavBar allStudents={this.state.allStudents} />
+                    <div className="content">
+                        <div>
+                            <form onChange={this.handleChange}>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="shownRatings"
+                                        value="fun"
+                                        checked={this.state.shownRatings === "fun"}
+                                    />Show Fun ratings
+                                </label>
+                                <br />
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="shownRatings"
+                                        value="difficulty"
+                                        checked={this.state.shownRatings === "difficulty"}
+                                    />Show difficulty ratings
+                                </label>
+                                <br />
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="shownRatings"
+                                        value="both"
+                                        checked={this.state.shownRatings === "both"}
+                                    />Show both
+                                </label>
+                            </form>
+                        </div>
 
-                </nav>
-                <Routes>
-                    <Route
-                        path="/"
-                        element={<GraphList
-                            allGraphsData={this.state.allAverages}
-                        />}
-                    />
-                    <Route
-                        path="/:studentName"
-                        element={<Student
-                            allRatings={this.state.ratingsGroupedByStudent}
-                        />}
-                    />
-                </Routes>
-            </div>
+                        <div className="filterlist">
+                            <form onChange={this.handleFilterChange} >
+                                {this.getAllStudents().map((student, index) =>
+                                    <FilterListItem
+                                        checked={this.state.shownStudents.includes(student)}
+                                        student={student}
+                                        key={index}
+                                    />
+                                )}
+                            </form>
+                        </div>
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={<GraphList
+                                    allGraphsData={this.getFilteredAverageGraphData()}
+                                    showFunRating={this.showRatings("fun")}
+                                    showDifficultyRating={this.showRatings("difficulty")}
+                                />}
+                            />
+                            <Route
+                                path="/:studentName"
+                                element={<Student
+                                    allRatings={this.getFilteredStudentGraphData()}
+                                    showFunRating={this.showRatings("fun")}
+                                    showDifficultyRating={this.showRatings("difficulty")}
+                                />}
+                            />
+                        </Routes>
+                    </div>
+                </div>
+            </>
         )
     }
 }

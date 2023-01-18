@@ -1,16 +1,20 @@
 import Graph from "./Graph"
 
-export function GraphList({ allGraphsData }) {
-    return (
-        <>
-            {
-                allGraphsData.map(chunk => (
-                    <Graph graphData={chunk} />
-                )
+const GraphList = ({ allGraphsData, showFunRating, showDifficultyRating }) => (
+    <>
+        {
+            allGraphsData.map((chunk, index) => (
+                <Graph
+                    graphData={chunk}
+                    showDifficultyRating={showDifficultyRating}
+                    showFunRating={showFunRating}
+                    key={index}
+                />
+            )
 
-                )
-            }
-        </>
-    )
-}
+            )
+        }
+    </>
+)
+export default GraphList
 

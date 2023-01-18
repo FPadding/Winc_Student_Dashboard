@@ -1,4 +1,3 @@
-import React from "react";
 import {
     VictoryBar,
     VictoryChart,
@@ -9,27 +8,32 @@ import {
 
 
 
-const AverageGraph = ({ graphData }) => (
+const Graph = ({ graphData, showFunRating, showDifficultyRating }) => (
     <VictoryChart domainPadding={8}>
         <VictoryGroup offset={6}>
-            <VictoryBar
-                data={graphData}
-                x="assignment"
-                y="difficultyRating"
-                tickValues={[1, 2, 3, 4, 5]}
-                tickFormat={graphData.map(
-                    avg => avg.assignment
-                )}
-            />
-            <VictoryBar
-                data={graphData}
-                x="assignment"
-                y="funRating"
-                tickValues={[1, 2, 3, 4, 5]}
-                tickFormat={graphData.map(
-                    avg => avg.assignment
-                )}
-            />
+            {showDifficultyRating &&
+                <VictoryBar
+                    data={graphData}
+                    x="assignment"
+                    y="difficultyRating"
+                    tickValues={[1, 2, 3, 4, 5]}
+                    tickFormat={graphData.map(
+                        avg => avg.assignment
+                    )}
+                />
+            }
+            {showFunRating &&
+                <VictoryBar
+                    data={graphData}
+                    x="assignment"
+                    y="funRating"
+                    tickValues={[1, 2, 3, 4, 5]}
+                    tickFormat={graphData.map(
+                        avg => avg.assignment
+                    )}
+                />
+            }
+
         </VictoryGroup >
         <VictoryAxis
             // tickValues specifies both the number of ticks and where
@@ -56,4 +60,4 @@ const AverageGraph = ({ graphData }) => (
     </VictoryChart>
 )
 
-export default AverageGraph
+export default Graph
