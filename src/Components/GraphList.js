@@ -2,6 +2,7 @@ import Graph from "./Graph"
 
 const GraphList = ({ allGraphsData, showFunRating, showDifficultyRating }) => (
     <>
+
         {
             allGraphsData.map((chunk, index) => (
                 <Graph
@@ -10,9 +11,7 @@ const GraphList = ({ allGraphsData, showFunRating, showDifficultyRating }) => (
                     showFunRating={showFunRating}
                     key={index}
                 />
-            )
-
-            )
+            ))
         }
     </>
 )

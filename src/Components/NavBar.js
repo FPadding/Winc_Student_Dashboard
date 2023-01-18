@@ -1,11 +1,23 @@
-import { Link, NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 
 const NavBar = ({ allStudents }) => (
     <nav className="navbar">
-        <Link to="/" className="home">Home</Link>
+        <NavLink
+            to="/"
+            className={({ isActive }) =>
+                isActive ? "home activelink" : "home"}
+            end
+        >Home
+        </NavLink>
         <ul>
             {allStudents.map((student, index) => (
-                <NavLink to={`/${student}`}>{student}</NavLink>
+                <NavLink
+                    to={`/${student}`}
+                    className={({ isActive }) =>
+                        isActive ? "activelink" : undefined}
+                    key={index}
+                >{student}
+                </NavLink>
             ))}
         </ul>
     </nav>

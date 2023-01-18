@@ -2,21 +2,18 @@ import {
     VictoryBar,
     VictoryChart,
     VictoryAxis,
-    VictoryTooltip,
     VictoryGroup,
 } from "victory";
 
-
-
 const Graph = ({ graphData, showFunRating, showDifficultyRating }) => (
     <VictoryChart domainPadding={8}>
-        <VictoryGroup offset={6}>
+        <VictoryGroup offset={7} >
             {showDifficultyRating &&
                 <VictoryBar
+                    color="#3c558f"
                     data={graphData}
                     x="assignment"
                     y="difficultyRating"
-                    tickValues={[1, 2, 3, 4, 5]}
                     tickFormat={graphData.map(
                         avg => avg.assignment
                     )}
@@ -24,20 +21,17 @@ const Graph = ({ graphData, showFunRating, showDifficultyRating }) => (
             }
             {showFunRating &&
                 <VictoryBar
+                    color="#8f443c"
                     data={graphData}
                     x="assignment"
                     y="funRating"
-                    tickValues={[1, 2, 3, 4, 5]}
                     tickFormat={graphData.map(
                         avg => avg.assignment
                     )}
                 />
             }
-
         </VictoryGroup >
         <VictoryAxis
-            // tickValues specifies both the number of ticks and where
-            // they are placed on the axis
             style={{
                 tickLabels: {
                     angle: -40,
@@ -47,16 +41,22 @@ const Graph = ({ graphData, showFunRating, showDifficultyRating }) => (
                 ticks: {
                     size: 5,
                     stroke: "#000",
-                    strokeWidth: 4
+                    strokeWidth: 2,
                 }
             }}
-
-            tickValues={[1, 2, 3, 4, 5]}
-            tickFormat={graphData.map(
-                avg => avg.assignment
+            tickFormat={graphData.map(avg =>
+                avg.assignment
             )}
         />
-        <VictoryAxis dependentAxis />
+        <VictoryAxis
+            dependentAxis
+            tickValues={[1, 2, 3, 4, 5]}
+            style={{
+                grid: {
+                    stroke: "#00000033"
+                }
+            }}
+        />
     </VictoryChart>
 )
 

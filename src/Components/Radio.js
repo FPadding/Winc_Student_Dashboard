@@ -1,5 +1,5 @@
 const Radio = ({ value, checked, text }) => (
-    <label>
+    <label className="radio">
         <input
             type="radio"
             name="shownRatings"

@@ -4,15 +4,6 @@ body {
   background-color: #f4ead7;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
-.flex {
-  display: flex;
-}
-
 header {
   background-color: #abc8ce;
   position: relative;
@@ -24,34 +15,52 @@ h1 {
   margin: 0;
   text-align: center;
   padding: 10px 0;
-  font-size: 60px;
+  font-size: 4vw;
   box-shadow: 0 0 10px;
 }
 
-nav {
+h2 {
+  font-size: 2.5vw;
+  margin: 0;
+}
+
+h3 {
+  text-align: center;
+  font-size: 1.5vw;
+}
+
+.navbar {
   position: fixed;
   top: 0;
+  bottom: 0;
   margin: 0;
   z-index: 0;
   background-color: #d4cbb9;
   border-right: 1px #9f8350 solid;
   padding-top: 100px;
-  height: 5000px;
-  width: 200px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 12%;
 }
 
-.filterlist {
+.filters {
   position: fixed;
   top: 0;
+  bottom: 0;
   right: 0;
   z-index: 0;
   padding-top: 100px;
   background-color: #d4cbb9;
   border-left: 1px #9f8350 solid;
-  width: 200px;
-  height: 5000px;
+  width: 12%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
+nav ul {
+  padding: 0;
+}
  
 nav ul a {
   position: relative;
@@ -59,24 +68,37 @@ nav ul a {
   display: block;
   background-color: #ead7b3;
   padding: 5px;
-  margin-top: 12px;
-  margin-right: 25px;
-  font-size: 20px;
+  margin: 3px;
+  font-size: 1.5vw;
   text-align: center;
+  border-radius: 2px;
 }
 
 a {
   text-decoration: none;
 }
 
+
+a:hover, .radio:hover, .filterlistitem:hover {
+  background-color: #e9dabd;
+}
+
+a:visited {
+  color:inherit
+}
+
 .home {
   display: block;
   background-color: #ead7b3;
-  font-size: 40px;
+  font-size: 2vw;
   text-align: center;
-  margin: 10px 4px 4px 4px;
+  margin: 10px 4px;
   padding: 10px;
   border-radius: 4px;
+}
+
+.activelink, .activelink:hover {
+  background-color: #edc984;
 }
 
 .content {
@@ -84,9 +106,68 @@ a {
   margin-right: 350px;
 }
 
+hr {
+  border-top: 1px solid #9f8350;
+  border-bottom: none;
+}
+
+label {
+  cursor: pointer;
+}
+
 .filterlistitem {
+  font-size: 1.1vw;
   display: block;
   background-color: #ead7b3;
-  margin: 10px;
-  cursor: pointer;
+  margin: 4px;
+  border-radius: 2px;
+}
+
+.filterlistitem input {
+  font-size: 1.1vw;
+}
+
+.filterlistitem:has(:checked), .radio:has(:checked) {
+  background-color: #edc984;
+}
+
+.graphs {
+  position: relative;
+  margin-left: 20%;
+  margin-right: 20%;
+  margin: 15px 25%;
+  background-color: #f8efdf;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.radio {
+  display: block;
+  background-color: #ead7b3;
+  margin: 5px 2px;
+  font-size: 0.9vw;
+  border-radius: 2px;
+}
+
+.legend {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 1vw;
+  margin-right: 10px;
+}
+
+.legend p::before {
+  content:"";
+  display: inline-block;
+  background-color: #3c558f;
+  width: 1.5vw;
+  height: 1vw;
+  margin-right: 3px;
+
+  border: 1px solid #000
+}
+
+.legend :first-child::before {
+  background-color: #8f443c;
 }
